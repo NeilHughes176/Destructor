@@ -123,12 +123,11 @@ public class Character_Controller_2D : MonoBehaviour
         // The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
         // This can be done using layers instead but Sample Assets will not overwrite your project settings.
         Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
-        for (int i = 0; i < colliders.Length; i++)
+        foreach (var collider in colliders)
         {
-            if (colliders[i].gameObject != gameObject)
-            {
-                m_Grounded = true;
-            }
+            m_Grounded = collider.gameObject != gameObject;
+            if (m_Grounded)
+                break;
         }
 
         // move charcater
@@ -170,23 +169,11 @@ public class Character_Controller_2D : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-
-
-        if (is_dashing)
-        {
-            float x_speed = m_Rigidbody2D.velocity.x;
-            if (x_speed < 0.1f)
-            {
-                if (collision.gameObject.CompareTag("Platform"))
-                {
-                    ResetDashVariables();
-                }
-                if (collision.gameObject.CompareTag("Door"))
-                {
-                    ResetDashVariables();
-                }
-            }
-        }
+        float x_speed = m_Rigidbody2D.velocity.x;
+        if (!is_dashing && x_speed > 0.1f)
+            return;
+        if (collision.gameObject.CompareTag("Platform") || collision.gameObject.CompareTag("Door"))
+            ResetDashVariables();
     }
 
 
@@ -331,16 +318,8 @@ public class Character_Controller_2D : MonoBehaviour
 
     private void SetAnim()
     {
-        bool is_left_pressed = false;
-        bool is_right_pressed = false;
-        if (horizontal_move < 0.0f)
-        {
-            is_left_pressed = true;
-        }
-        else if (horizontal_move > 0.0f)
-        {
-            is_right_pressed = true;
-        }
+        bool is_left_pressed = horizontal_move < 0.0f;
+        bool is_right_pressed = horizontal_move > 0.0f;
         anim_cont.SetAnimStates(m_FacingRight, !m_Grounded, is_dashing, is_left_pressed, is_right_pressed, is_dead);
 
     }

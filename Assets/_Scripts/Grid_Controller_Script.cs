@@ -35,11 +35,11 @@ public class Grid_Controller_Script : MonoBehaviour
         // for each transform in this array, snap to a grid value based on the snap value //
         foreach (Transform child_transform in child_transforms)
         {
-            SnapToGrid(child_transform);
+            child_transform.position = SnapToGrid(child_transform);
         }
     }
 
-    void SnapToGrid(Transform child_transform)
+    Vector3 SnapToGrid(Transform child_transform)
     {
         float cell_width_inverse = 1.0f / cell_width;
         float cell_height_inverse = 1.0f / cell_height;
@@ -53,9 +53,9 @@ public class Grid_Controller_Script : MonoBehaviour
         x = Mathf.Round((child_transform.position.x) * cell_width_inverse) / cell_width_inverse;
         y = Mathf.Round((child_transform.position.y) * cell_height_inverse) / cell_height_inverse;
         z = depth;  // depth from camera
-        
 
-        child_transform.position = new Vector3(x, y, z);
+        return new Vector3(x, y, z);
+        //child_transform.position = new Vector3(x, y, z);
     }
 
 
